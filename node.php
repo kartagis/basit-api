@@ -15,16 +15,20 @@ for ($i=0;$i<count($columns);$i++) {
  */
 switch($method) {
   case 'GET':
-    $sql=$db->query("SELECT * FROM $nodetable");
-    $node=array();
-    while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $node[] = $row;
+    if (!empty($_POST['data'])) {
+      header('HTTP/1.0 406 Not Acceptable');
+    } else {
+      $sql=$db->query("SELECT * FROM $nodetable");
+      $node=array();
+      while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+        $node[] = $row;
+      }
+      echo json_encode($node);
+      break;
     }
-    echo json_encode($node);
-    break;
   case 'POST':
     if (empty($_POST['data'])) {
-      header('Missing data', true, 400);
+      header('HTTP/1.0 400 Bad Request');
     } else {
       $node=$db->query("INSERT INTO $nodetable SET $set");
       $db->execute();
